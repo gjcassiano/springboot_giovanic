@@ -1,0 +1,64 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.2.0'
+    }
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.2.2.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs "libs"
+    }
+}
+
+ext {
+    set('springCloudVersion', "Hoxton.SR1")
+}
+
+dependencies {
+    compile  'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile  'org.springframework.boot:spring-boot-starter-web'
+    compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.4.10.Final'
+    compile  'org.flywaydb:flyway-core'
+    compile  'org.springframework.cloud:spring-cloud-gcp-starter'
+    compile 'mysql:mysql-connector-java'
+    compile group: 'com.github.javafaker', name: 'javafaker', version: '0.2'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+configurations {
+    all*.exclude module : 'spring-boot-starter-logging'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+test {
+	useJUnitPlatform()
+}
+
+task copyToLib(type: Copy) {
+	into "lib"
+	from configurations.runtime
+}
+

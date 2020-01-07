@@ -1,0 +1,15 @@
+service: default
+runtime: java8
+env: standard
+instance_class: F1
+
+automatic_scaling:
+  max_instances: 2
+  target_cpu_utilization: 0.95
+
+
+handlers:
+- url: /.*
+  secure: always
+  redirect_http_response_code: 301
+  script: auto
